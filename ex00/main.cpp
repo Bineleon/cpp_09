@@ -16,8 +16,13 @@ void printHeader(const std::string& str)
 	std::cout << RESET << std::endl;
 }
 
-int main(void)
+int main(int ac, char **av)
 {
-
+	if (ac != 2)
+	{
+		std::cerr << RED << "Please follow this format : <filename>" << RESET << std::endl;
+		return 1;
+	}
+	
     return 0;
 }
