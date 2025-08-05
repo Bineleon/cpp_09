@@ -16,13 +16,28 @@ void printHeader(const std::string& str)
 	std::cout << RESET << std::endl;
 }
 
+void	errMsg(std::string msg)
+{
+	std::cerr << RED << "Error: " << msg << RESET << std::endl;
+}
+
 int main(int ac, char **av)
 {
-	if (ac != 2)
+	if (ac != 2 || !av[1])
 	{
-		std::cerr << RED << "Please follow this format : <filename>" << RESET << std::endl;
+		errMsg("could not open file.");
 		return 1;
 	}
+
+	std::ifstream myFile(av[1]);
+    if (!myFile.is_open())
+    {
+		errMsg("could not open file.");
+		return 1;
+    }
+	
+	myFile.close();
 	
     return 0;
 }
+

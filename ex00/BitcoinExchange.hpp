@@ -5,13 +5,15 @@
 
 class BitcoinExchange
 {
-    public:
-        BitcoinExchange(void);
-        BitcoinExchange(const BitcoinExchange& src);
-        BitcoinExchange& operator=(const BitcoinExchange& rhs);
-        ~BitcoinExchange(void);
+	public:
+		BitcoinExchange(void);
+		~BitcoinExchange(void);
+		
+	private:
+		BitcoinExchange(const BitcoinExchange& src);
+		BitcoinExchange& operator=(const BitcoinExchange& rhs);
 
-    private:
+		std::map<std::string, float>    _db;
 
 };
 
