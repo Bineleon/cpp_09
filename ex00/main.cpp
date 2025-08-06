@@ -36,6 +36,8 @@ int main(int ac, char **av)
 		return 1;
     }
 	
+	BitcoinExchange btc;
+
 	myFile.close();
 	
     return 0;

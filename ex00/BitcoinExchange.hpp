@@ -2,17 +2,45 @@
 #define BITCOINEXCHANGE_HPP
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <cstdlib>
+#include <map>
 
 class BitcoinExchange
 {
 	public:
+		class BadInputException : public std::exception
+		{
+			std::string _msg;
+			public:
+				BadInputException(const std::string& input) : _msg("Error: bad input => " + input) {}
+				const char* what() const throw() { return _msg.c_str(); }
+		};
+
+		class NegativeValueException : public std::exception
+		{
+			const char* what() const throw() { return "Error: not a positive number."; }
+		};
+
+		class TooLargeValueException : public std::exception
+		{
+			const char* what() const throw() { return "Error: too large a number."; }
+		};
+
 		BitcoinExchange(void);
 		~BitcoinExchange(void);
 		
+		void	processDb(void);
+		void	beErrMsg(std::string msg);
+		void	printDb(void);
+		bool	checkValidDate(std::string date) const;
+		bool	checkValidValue(float value) const;
 	private:
 		BitcoinExchange(const BitcoinExchange& src);
 		BitcoinExchange& operator=(const BitcoinExchange& rhs);
 
+		std::string						_filename;
 		std::map<std::string, float>    _db;
 
 };
