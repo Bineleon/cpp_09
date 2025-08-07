@@ -35,9 +35,16 @@ int main(int ac, char **av)
 		errMsg("could not open file.");
 		return 1;
     }
+	try
+	{
+		BitcoinExchange btc;
+		btc.processFile(myFile);
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << SMYELLOW << e.what() << RESET << '\n';
+	}
 	
-	BitcoinExchange btc;
-
 	myFile.close();
 	
     return 0;

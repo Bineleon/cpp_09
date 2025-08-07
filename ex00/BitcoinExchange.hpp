@@ -12,37 +12,48 @@ class BitcoinExchange
 	public:
 		class BadInputException : public std::exception
 		{
-			std::string _msg;
+			private:
+				std::string _msg;
+
 			public:
-				BadInputException(const std::string& input) : _msg("Error: bad input => " + input) {}
-				const char* what() const throw() { return _msg.c_str(); }
+				BadInputException(const std::string& input): _msg("Error: bad input => " + input) {}
+
+				virtual ~BadInputException() throw() {}
+
+				virtual const char* what() const throw() {
+					return _msg.c_str();
+				}
 		};
 
 		class NegativeValueException : public std::exception
 		{
-			const char* what() const throw() { return "Error: not a positive number."; }
+			public:
+				virtual const char* what() const throw();
 		};
 
 		class TooLargeValueException : public std::exception
 		{
-			const char* what() const throw() { return "Error: too large a number."; }
+			public:
+				virtual const char* what() const throw();
 		};
 
 		BitcoinExchange(void);
 		~BitcoinExchange(void);
 		
 		void	processDb(void);
-		void	beErrMsg(std::string msg);
 		void	printDb(void);
 		bool	checkValidDate(std::string date) const;
 		bool	checkValidValue(float value) const;
+		void	parseLine(const std::string& line);
+		void    processFile(std::ifstream& file);
+		float   getRate(const std::string &date);
+
 	private:
 		BitcoinExchange(const BitcoinExchange& src);
 		BitcoinExchange& operator=(const BitcoinExchange& rhs);
 
 		std::string						_filename;
 		std::map<std::string, float>    _db;
-
 };
 
 # define RESET "\033[0m"

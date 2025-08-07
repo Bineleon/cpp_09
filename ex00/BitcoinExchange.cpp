@@ -24,38 +24,7 @@ BitcoinExchange::~BitcoinExchange(void)
     // std::cout << "BitcoinExchange destructor called" << std::endl;
 }
 
-void	BitcoinExchange::beErrMsg(std::string msg)
-{
-	std::cerr << RED << "Error: " << msg << RESET << std::endl;
-}
-
-void	BitcoinExchange::printDb(void)
-{
-    for (std::map<std::string, float>::iterator it = _db.begin(); it != _db.end(); ++it)
-        std::cout << it->first << " => " << it->second << std::endl;
-}
-
-void	BitcoinExchange::processDb(void)
-{
-    std::ifstream dbFile(_filename.c_str());
-
-    if (!dbFile.is_open())
-    {
-        beErrMsg("could not open db file");
-        return;
-    }
-    std::string line;
-    std::getline(dbFile, line);
-
-    while (std::getline(dbFile, line))
-    {
-        std::istringstream ss(line);
-        std::string date, value;
-
-        if (std::getline(ss, date, ',') && std::getline(ss, value))
-            _db[date] = std::strtof(value.c_str(), NULL);
-    }
-}
+/* UTILS */
 
 bool    checkLeapYear(int year)
 {
@@ -89,6 +58,36 @@ std::map<int, int> getDaysInMonths(int year)
     return daysInMonth;
 }
 
+/* MEMBER FUNCTIONS */
+
+void	BitcoinExchange::printDb(void)
+{
+    for (std::map<std::string, float>::iterator it = _db.begin(); it != _db.end(); ++it)
+        std::cout << it->first << " => " << it->second << std::endl;
+}
+
+void	BitcoinExchange::processDb(void)
+{
+    std::ifstream dbFile(_filename.c_str());
+
+    if (!dbFile.is_open())
+    {
+        beErrMsg("could not open db file");
+        return;
+    }
+    std::string line;
+    std::getline(dbFile, line);
+
+    while (std::getline(dbFile, line))
+    {
+        std::istringstream ss(line);
+        std::string date, value;
+
+        if (std::getline(ss, date, ',') && std::getline(ss, value))
+            _db[date] = std::strtof(value.c_str(), NULL);
+    }
+}
+
 bool	BitcoinExchange::checkValidDate(std::string date) const
 {
     if (date.length() != 10 || date[4] != '-' || date[7] != '-')
@@ -118,22 +117,50 @@ bool	BitcoinExchange::checkValidValue(float value) const
     return true;
 }
 
-void parseLine(const std::string& line, const BitcoinExchange& btc)
+void    BitcoinExchange::processFile(std::ifstream& file)
+{
+    std::string line;
+    std::getline(file, line);
+
+    while (std::getline(file, line))
+    {
+        try
+        {
+            parseLine(line);
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << SMYELLOW << e.what() << RESET << '\n';
+        }
+    }
+}
+
+void    BitcoinExchange::parseLine(const std::string& line)
 {
     size_t sep = line.find('|');
-    if (sep == std::string::npos)
+
+    if (sep == std::string::npos || line.find('|', sep + 1) != std::string::npos)
         throw BitcoinExchange::BadInputException(line);
 
-    std::string date = trim(line.substr(0, sep));
-    std::string sValue = trim(line.substr(sep + 1));
+    if (sep < 1 || sep + 1 > line.length())
+        throw BitcoinExchange::BadInputException(line);
 
-    if (!btc.checkValidDate(date))
+    if (line[sep - 1] != ' ' || line[sep + 1] != ' ')
+        throw BitcoinExchange::BadInputException(line);
+
+    std::string date = line.substr(0, sep - 1);
+    std::string sValue = line.substr(sep + 2);
+
+    if (!checkValidDate(date))
         throw BitcoinExchange::BadInputException(date);
 
     float value;
     char* end;
 
     value = std::strtof(sValue.c_str(), &end);
+    
+    if (*end != '\0')
+        throw BitcoinExchange::BadInputException(sValue);
 
     if (!checkValidValue(value))
     {
@@ -144,7 +171,33 @@ void parseLine(const std::string& line, const BitcoinExchange& btc)
         throw BitcoinExchange::BadInputException(sValue);
     }
 
-    float rate = btc.getRateForDate(date);
+    float rate = getRate(date);
     
-    std::cout << date << " => " << value << " = " << rate * value << std::endl;
+    std::cout << SMGREEN << date << " => " << value << " = " << rate * value << RESET << std::endl;
+}
+
+float    BitcoinExchange::getRate(const std::string &date)
+{
+    std::map<std::string, float>::const_iterator it = _db.lower_bound(date);
+    
+    if (it != _db.end() && it->first == date)
+        return it->second;
+
+    if (it == _db.begin())
+        throw  BitcoinExchange::BadInputException(date);
+
+    --it;
+    return it->second;
+}
+
+/* EXCEPTIONS */
+
+const char* BitcoinExchange::NegativeValueException::what() const throw()
+{
+    return "Error: not a positive number.";
+}
+
+const char* BitcoinExchange::TooLargeValueException::what() const throw()
+{
+    return "Error: too large a number.";
 }
