@@ -56,6 +56,8 @@ class BitcoinExchange
 		std::map<std::string, float>    _db;
 };
 
+void	errMsg(std::string msg);
+
 # define RESET "\033[0m"
 # define SMRED "\033[0;31m"
 # define SMGREEN "\033[0;32m"

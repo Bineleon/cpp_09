@@ -72,7 +72,7 @@ void	BitcoinExchange::processDb(void)
 
     if (!dbFile.is_open())
     {
-        beErrMsg("could not open db file");
+        errMsg("could not open db file");
         return;
     }
     std::string line;
