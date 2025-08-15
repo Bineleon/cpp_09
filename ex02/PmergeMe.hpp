@@ -2,17 +2,23 @@
 #define PMERGEME_HPP
 
 #include <iostream>
+#include <vector>
+#include <sstream>
+#include <climits>
+#include <algorithm>
 
 class PmergeMe
 {
     public:
         PmergeMe(void);
+        ~PmergeMe(void);
+        std::vector<int>    parse(int ac, char **input);
+
+        
+    private:
         PmergeMe(const PmergeMe& src);
         PmergeMe& operator=(const PmergeMe& rhs);
-        ~PmergeMe(void);
-
-    private:
-
+        
 };
 
 # define RESET "\033[0m"
