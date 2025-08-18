@@ -45,52 +45,55 @@ void PmergeMe::sort(std::vector<int> &vec)
 {
     if (sortSmallVec(vec))
         return;
-    
-    std::vector<int> bigs;
-    std::vector<int> smalls;
-    size_t vecSize = vec.size();
 
-    for (size_t i = 0; i < vecSize - 1; i += 2)
+    std::vector<std::pair<int, int> > pairs;
+    std::vector<int> bigs;
+
+    size_t vecSize = vec.size();
+    bool hasOrphan = (vecSize % 2 != 0);
+    int orphan = 0;
+
+    for (size_t i = 0; i + 1 < vecSize; i += 2)
     {
-        int a = vec[i];
-        int b = vec[i + 1];
-        if (a > b)
-        {
-            bigs.push_back(a);
-            smalls.push_back(b);
-        }
-        else
-        {
-            bigs.push_back(b);
-            smalls.push_back(a);
-        }
+        int big = std::max(vec[i], vec[i + 1]);
+        int small = std::min(vec[i], vec[i + 1]);
+        pairs.push_back(std::make_pair(big, small));
     }
 
-    bool isOddsize = (vecSize % 2 != 0);
-    int orphan = 0;
-    if (isOddsize)
+    if (hasOrphan)
         orphan = vec[vecSize - 1];
 
-    std::cout << "Bigs : ";
-    printVector(bigs);
-    std::cout << "Smalls : ";
-    printVector(smalls);
+    for (size_t i = 0; i < pairs.size(); ++i)
+        bigs.push_back(pairs[i].first);
+
     sort(bigs);
 
-    for (size_t i = 0; i < smalls.size(); ++i)
+    if (!pairs.empty())
+        boundedInsertByBig(bigs, pairs[0].first, pairs[0].second);
+
+    std::vector<size_t> order = insertionIndex(pairs.size());
+    for (size_t i = 0; i < order.size(); ++i)
     {
-        std::vector<int>::iterator limit = bigs.begin() + i + 1;
-        std::vector<int>::iterator pos = std::lower_bound(bigs.begin(), limit, smalls[i]);
-        bigs.insert(pos, smalls[i]);
+        size_t idx = order[i];
+        boundedInsertByBig(bigs, pairs[idx].first, pairs[idx].second);
     }
 
-    if (isOddsize)
+    if (hasOrphan)
     {
         std::vector<int>::iterator pos = std::lower_bound(bigs.begin(), bigs.end(), orphan);
         bigs.insert(pos, orphan);
     }
 
     vec = bigs;
+}
+
+void boundedInsertByBig(std::vector<int>& mainChain, int bigValue, int smallValue)
+{
+    std::vector<int>::iterator bigIt = std::find(mainChain.begin(), mainChain.end(), bigValue);
+    if (bigIt == mainChain.end())
+        return;
+    std::vector<int>::iterator pos = std::lower_bound(mainChain.begin(), bigIt + 1, smallValue);
+    mainChain.insert(pos, smallValue);
 }
 
 /* UTILS */
@@ -112,6 +115,34 @@ std::vector<size_t> jacobsthal(size_t lim)
         j1 = j2;
     }
     return jacob;
+}
+
+std::vector<size_t> insertionIndex(size_t size)
+{
+    std::vector<size_t> indexToInsert;
+    std::vector<size_t> jacob = jacobsthal(size);
+
+    size_t prev = 1;
+    for (size_t k = 0; k < jacob.size(); ++k)
+    {
+        size_t j = jacob[k];
+        size_t limit = (j < size) ? j : size;
+
+        for (size_t i = limit; i > prev; --i)
+            indexToInsert.push_back(i - 1);
+
+        prev = j;
+        if (prev >= size)
+            break;
+    }
+
+    if (prev < size)
+    {
+        for (size_t i = size; i > prev; --i)
+            indexToInsert.push_back(i - 1);
+    }
+
+    return indexToInsert;
 }
 
 bool sortSmallVec(std::vector<int> & vec)

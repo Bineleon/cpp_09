@@ -22,10 +22,14 @@ class PmergeMe
         
 };
 
-void    checkIfIsDigit(std::string const & element);
-void    checkIsValidInt(std::string const & element, std::vector<int> &res);
-bool    sortSmallVec(std::vector<int> & vec);
-void    printVector(const std::vector<int>& vec);
+void                printVector(const std::vector<int>& vec);
+void                checkIfIsDigit(std::string const & element);
+void                checkIsValidInt(std::string const & element, std::vector<int> &res);
+bool                sortSmallVec(std::vector<int> & vec);
+std::vector<size_t> jacobsthal(size_t lim);
+std::vector<size_t> insertionIndex(size_t size);
+
+void boundedInsertByBig(std::vector<int>& mainChain, int bigValue, int smallValue);
 
 # define RESET "\033[0m"
 # define SMRED "\033[0;31m"
