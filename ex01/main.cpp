@@ -20,7 +20,7 @@ int main(int ac, char **av)
 {
 	if (ac != 2)
 	{
-		std::cerr << "Error: use this format : <rpn>";
+		std::cerr << RED << "Error: use this format : <rpn>" << RESET << std::endl;
 		return 1;
 	}
 	
