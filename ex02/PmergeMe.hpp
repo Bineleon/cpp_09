@@ -13,6 +13,7 @@ class PmergeMe
         PmergeMe(void);
         ~PmergeMe(void);
         std::vector<int>    parse(int ac, char **input);
+        void                sort(std::vector<int> &vec);
 
         
     private:
@@ -20,6 +21,11 @@ class PmergeMe
         PmergeMe& operator=(const PmergeMe& rhs);
         
 };
+
+void    checkIfIsDigit(std::string const & element);
+void    checkIsValidInt(std::string const & element, std::vector<int> &res);
+bool    sortSmallVec(std::vector<int> & vec);
+void    printVector(const std::vector<int>& vec);
 
 # define RESET "\033[0m"
 # define SMRED "\033[0;31m"
