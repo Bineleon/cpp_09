@@ -40,17 +40,20 @@ std::vector<int>    PmergeMe::parse(int ac, char **input)
     return res;
 }
 
-
-void PmergeMe::sort(std::vector<int> &vec)
+void printPairs(const std::vector< std::pair<int,int> >& pairs)
 {
-    if (sortSmallVec(vec))
-        return;
+    for (size_t i = 0; i < pairs.size(); ++i)
+    {
+        std::cout << "[" << pairs[i].first << ", " << pairs[i].second << "]";
+        if (i + 1 < pairs.size())
+            std::cout << " ";
+    }
+    std::cout << std::endl;
+}
 
-    std::vector<std::pair<int, int> > pairs;
-    std::vector<int> bigs;
-
+int    pairAndSort(std::vector<int> &vec, std::vector<int> &bigs, std::vector<std::pair<int, int> > &pairs, bool &hasOrphan)
+{
     size_t vecSize = vec.size();
-    bool hasOrphan = (vecSize % 2 != 0);
     int orphan = 0;
 
     for (size_t i = 0; i + 1 < vecSize; i += 2)
@@ -66,8 +69,11 @@ void PmergeMe::sort(std::vector<int> &vec)
     for (size_t i = 0; i < pairs.size(); ++i)
         bigs.push_back(pairs[i].first);
 
-    sort(bigs);
+    return orphan;
+}
 
+void    insertSmall(std::vector<int> &bigs, std::vector<std::pair<int, int> > &pairs, bool &hasOrphan)
+{
     if (!pairs.empty())
         boundedInsertByBig(bigs, pairs[0].first, pairs[0].second);
 
@@ -83,17 +89,46 @@ void PmergeMe::sort(std::vector<int> &vec)
         std::vector<int>::iterator pos = std::lower_bound(bigs.begin(), bigs.end(), orphan);
         bigs.insert(pos, orphan);
     }
+}
+
+void    PmergeMe::sort(std::vector<int> &vec)
+{
+    if (sortSmallVec(vec))
+        return;
+
+    std::vector<std::pair<int, int> > pairs;
+    std::vector<int> bigs;
+
+    size_t vecSize = vec.size();
+    bool hasOrphan = (vecSize % 2 != 0);
+    int orphan = pairAndSort(vec, bigs, pairs, hasOrphan);
+
+    /* DEBUG */
+
+    std::cout << "Bigs before sort: ";
+    printVector(bigs);
+    std::cout << "Pairs : ";
+    printPairs(pairs);
+
+    sort(bigs);
+
+    std::cout << "Bigs after sort: ";
+    printVector(bigs);
+
+    /* POST RECURSION */
+
+    insertSmall(bigs, pairs, hasOrphan);
 
     vec = bigs;
 }
 
-void boundedInsertByBig(std::vector<int>& mainChain, int bigValue, int smallValue)
+void boundedInsertByBig(std::vector<int>& mainChain, int bigValue, int toInsert)
 {
     std::vector<int>::iterator bigIt = std::find(mainChain.begin(), mainChain.end(), bigValue);
     if (bigIt == mainChain.end())
         return;
-    std::vector<int>::iterator pos = std::lower_bound(mainChain.begin(), bigIt + 1, smallValue);
-    mainChain.insert(pos, smallValue);
+    std::vector<int>::iterator pos = std::lower_bound(mainChain.begin(), bigIt + 1, toInsert);
+    mainChain.insert(pos, toInsert);
 }
 
 /* UTILS */
