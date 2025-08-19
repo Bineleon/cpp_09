@@ -3,17 +3,59 @@
 
 #include <iostream>
 #include <vector>
+#include <deque>
 #include <sstream>
 #include <climits>
 #include <algorithm>
+
+void                checkIfIsDigit(std::string const & element);
+
+template <typename T>
+void    checkIsValidInt(std::string const& element, T& res)
+{
+    std::istringstream iss(element);
+
+    long long value;
+    iss >> value;
+
+    if (iss.fail() || !iss.eof())
+        throw std::runtime_error("Error");
+    
+    if (value < 0 || value > INT_MAX)
+        throw std::runtime_error("Error");
+
+    if (std::find(res.begin(), res.end(), static_cast<int>(value)) != res.end())
+        throw std::runtime_error("Error");
+    res.push_back(static_cast<int>(value));
+}
 
 class PmergeMe
 {
     public:
         PmergeMe(void);
         ~PmergeMe(void);
-        std::vector<int>    parse(int ac, char **input);
+        template <typename T>
+        T    parse(int ac, char **input)
+        {
+            T res;
+
+            for (int i = 1; i < ac; ++i)
+            {
+                std::string element = input[i];
+
+                if (element.empty())
+                    throw std::runtime_error("Error");
+                
+                checkIfIsDigit(element);
+                checkIsValidInt(element, res);
+            }
+            return res;
+        }
+
+        // std::vector<int>    parse(int ac, char **input);
         void                sort(std::vector<int> &vec);
+        void                sort(std::deque<int> &dq);
+
 
         
     private:
@@ -22,14 +64,24 @@ class PmergeMe
         
 };
 
-void                printVector(const std::vector<int>& vec);
-void                checkIfIsDigit(std::string const & element);
-void                checkIsValidInt(std::string const & element, std::vector<int> &res);
-bool                sortSmallVec(std::vector<int> & vec);
-std::vector<size_t> jacobsthal(size_t lim);
-std::vector<size_t> insertionIndex(size_t size);
+bool                sortSmallCont(std::vector<int> & vec);
+bool                sortSmallCont(std::deque<int> & dq);
 
-void boundedInsertByBig(std::vector<int>& mainChain, int bigValue, int smallValue);
+void                boundedInsert(std::vector<int>& mainChain, int bigValue, int toInsert);
+void                boundedInsert(std::deque<int>& mainChain, int bigValue, int toInsert);
+
+
+int                 pairAndSort(std::vector<int> &vec, std::vector<int> &bigs, std::vector<std::pair<int, int> > &pairs, bool &hasOrphan);
+int                 pairAndSort(std::deque<int> &dq, std::deque<int> &bigs, std::deque<std::pair<int, int> > &pairs, bool &hasOrphan);
+
+void                insertSmall(std::vector<int> &bigs, std::vector<std::pair<int, int> > &pairs, bool &hasOrphan, int orphan);
+void                insertSmall(std::deque<int> &bigs, std::deque<std::pair<int, int> > &pairs, bool &hasOrphan, int orphan);
+
+std::vector<size_t> jacobsthal(size_t lim);
+std::deque<size_t>  jacobsthalDeque(size_t lim);
+
+std::vector<size_t> insertionIndex(size_t size);
+std::deque<size_t>  insertionIndexDeque(size_t size);
 
 # define RESET "\033[0m"
 # define SMRED "\033[0;31m"
@@ -45,5 +97,47 @@ void boundedInsertByBig(std::vector<int>& mainChain, int bigValue, int smallValu
 # define BLUE "\033[1;34m"
 # define MAGENTA "\033[1;35m"
 # define CYAN "\033[1;36m"
+
+
+template <typename T>
+bool isSorted(const T& cont)
+{
+	for (size_t i = 1; i < cont.size(); ++i)
+    {
+        if (cont[i - 1] > cont[i])
+            return false;
+    }
+    return true;
+}
+
+template <typename T>
+void                printContainer(const T& cont)
+{
+	std::string color;
+	if (isSorted(cont))
+		color = SMGREEN;
+	else
+		color = SMYELLOW;
+
+    for (typename T::const_iterator it = cont.begin(); it != cont.end(); ++it)
+    {
+        std::cout << color << *it;
+        if (it + 1 != cont.end())
+            std::cout << " ";
+    }
+    std::cout << RESET << std::endl;
+}
+
+template <typename T>
+void    printPairs(const T& pairs)
+{
+    for (size_t i = 0; i < pairs.size(); ++i)
+    {
+        std::cout << "[" << pairs[i].first << ", " << pairs[i].second << "]";
+        if (i + 1 < pairs.size())
+            std::cout << " ";
+    }
+    std::cout << std::endl;
+}
 
 #endif
