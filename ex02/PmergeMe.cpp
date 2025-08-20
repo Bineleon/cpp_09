@@ -36,18 +36,7 @@ void    PmergeMe::sort(std::vector<int> &vec)
     bool hasOrphan = (vecSize % 2 != 0);
     int orphan = pairAndSort(vec, bigs, pairs, hasOrphan);
 
-    // std::cout << "Bigs before sort: ";
-    // printContainer(bigs);
-    // std::cout << "Pairs : ";
-    // printPairs(pairs);
-
     sort(bigs);
-
-    // std::cout << "Bigs after sort: ";
-    // printContainer(bigs);
-    // std::cout << "Pairs : ";
-    // printPairs(pairs);
-
 
     insertSmall(bigs, pairs, hasOrphan, orphan);
 
@@ -122,7 +111,6 @@ bool isSorted(const std::vector<int>& cont)
     return true;
 }
 
-
 bool sortSmallCont(std::vector<int>& cont)
 {
     if (cont.size() <= 1)
@@ -184,7 +172,6 @@ std::vector<std::size_t> insertionIndex(std::size_t size)
 
 /* DEQUE */
 
-
 bool sortSmallCont(std::deque<int>& cont)
 {
     if (cont.size() <= 1)
@@ -210,21 +197,9 @@ void    PmergeMe::sort(std::deque<int> &dq)
     bool hasOrphan = (dqSize % 2 != 0);
     int orphan = pairAndSort(dq, bigs, pairs, hasOrphan);
 
-    // std::cout << "Bigs before sort: ";
-    // printContainer<std::deque<int> >(bigs);
-    // std::cout << "Pairs : ";
-    // printPairs(pairs);
-
     sort(bigs);
 
-    // std::cout << "Bigs after sort: ";
-    // printContainer<std::deque<int> >(bigs);
-    // std::cout << "Pairs : ";
-    // printPairs(pairs);
-
-
     insertSmall(bigs, pairs, hasOrphan, orphan);
-
     dq = bigs;
 }
 
@@ -315,7 +290,6 @@ std::deque<size_t> insertionIndexDeque(size_t size)
         if (prev >= size)
             break;
     }
-
     if (prev < size)
     {
         for (size_t i = size; i > prev; --i)
