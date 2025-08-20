@@ -7,6 +7,7 @@
 #include <sstream>
 #include <climits>
 #include <algorithm>
+#include <sys/time.h>
 
 void                checkIfIsDigit(std::string const & element);
 
@@ -34,6 +35,7 @@ class PmergeMe
     public:
         PmergeMe(void);
         ~PmergeMe(void);
+        
         template <typename T>
         T    parse(int ac, char **input)
         {
@@ -52,7 +54,6 @@ class PmergeMe
             return res;
         }
 
-        // std::vector<int>    parse(int ac, char **input);
         void                sort(std::vector<int> &vec);
         void                sort(std::deque<int> &dq);
 

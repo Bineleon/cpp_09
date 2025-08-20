@@ -110,7 +110,7 @@ void    checkIfIsDigit(std::string const & element)
     for (size_t i = 0; i < element.length(); ++i)
     {
         if (!std::isdigit(element[i]))
-            throw std::runtime_error("DEBUG: not int");
+            throw std::runtime_error("Error");
     }
 }
 

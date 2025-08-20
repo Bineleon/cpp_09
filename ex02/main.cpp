@@ -16,6 +16,12 @@ void printHeader(const std::string& str)
 	std::cout << RESET << std::endl;
 }
 
+static double	getTimestampUsec(void)
+{
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	return ((double)tv.tv_sec * 1000000.0 + (double)tv.tv_usec);
+}
 
 int main(int ac, char **av)
 {
@@ -28,19 +34,26 @@ int main(int ac, char **av)
 	try
 	{
 		PmergeMe pmrg;
+		double start_timeV, end_timeV, start_timeD, end_timeD;
 		std::vector<int> vec = pmrg.parse<std::vector<int> >(ac, av);
 		std::cout << "Before: ";
 		printContainer<std::vector<int> >(vec);
+
+		start_timeV = getTimestampUsec();
 		pmrg.sort(vec);
+		end_timeV = getTimestampUsec();
+
 		std::cout << "After: ";
 		printContainer<std::vector<int> >(vec);
 
+		std::cout << "Time to process a range of	" << vec.size() << " elements with std::vector	:	" <<  end_timeV - start_timeV<< " us\n";
+
 		std::deque<int> dq = pmrg.parse<std::deque<int> >(ac, av);
-		std::cout << "Before: ";
-		printContainer<std::deque<int> >(dq);
+		start_timeD = getTimestampUsec();
 		pmrg.sort(dq);
-		std::cout << "After: ";
-		printContainer<std::deque<int> >(dq);
+		end_timeD = getTimestampUsec();
+
+		std::cout << "Time to process a range of	" << dq.size() << " elements with std::deque	:	" << end_timeD - start_timeD << " us\n";
 	}
 	catch(const std::exception& e)
 	{
