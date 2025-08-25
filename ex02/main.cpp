@@ -35,24 +35,24 @@ int main(int ac, char **av)
 	{
 		PmergeMe pmrg;
 		double start_timeV, end_timeV, start_timeD, end_timeD;
-		std::vector<int> vec = pmrg.parse<std::vector<int> >(ac, av);
+		std::vector<int> input = pmrg.parse<std::vector<int> >(ac, av);
 		std::cout << "Before: ";
-		printContainer<std::vector<int> >(vec);
+		printContainer<std::vector<int> >(input);
 
 		start_timeV = getTimestampUsec();
+		std::vector<int> vec(input.begin(), input.end());
 		pmrg.sort(vec);
 		end_timeV = getTimestampUsec();
 
 		std::cout << "After: ";
 		printContainer<std::vector<int> >(vec);
 
-		std::cout << "Time to process a range of	" << vec.size() << " elements with std::vector	:	" <<  end_timeV - start_timeV<< " us\n";
-
-		std::deque<int> dq = pmrg.parse<std::deque<int> >(ac, av);
 		start_timeD = getTimestampUsec();
+		std::deque<int> dq(input.begin(), input.end());
 		pmrg.sort(dq);
 		end_timeD = getTimestampUsec();
-
+		
+		std::cout << "Time to process a range of	" << vec.size() << " elements with std::vector	:	" <<  end_timeV - start_timeV<< " us\n";
 		std::cout << "Time to process a range of	" << dq.size() << " elements with std::deque	:	" << end_timeD - start_timeD << " us\n";
 	}
 	catch(const std::exception& e)
@@ -61,5 +61,5 @@ int main(int ac, char **av)
 		return 1;
 	}
 
-    return 0;
+	return 0;
 }

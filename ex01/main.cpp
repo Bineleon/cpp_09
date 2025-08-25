@@ -32,10 +32,10 @@ int main(int ac, char **av)
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << "Error" << '\n';
+		std::cerr << SMRED << "Error" << RESET << '\n';
 		return 1;
 	}
 	
 
-    return 0;
+	return 0;
 }

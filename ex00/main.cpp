@@ -30,11 +30,11 @@ int main(int ac, char **av)
 	}
 
 	std::ifstream myFile(av[1]);
-    if (!myFile.is_open())
-    {
+	if (!myFile.is_open())
+	{
 		errMsg("could not open file.");
 		return 1;
-    }
+	}
 	try
 	{
 		BitcoinExchange btc;
@@ -47,6 +47,6 @@ int main(int ac, char **av)
 	
 	myFile.close();
 	
-    return 0;
+	return 0;
 }
 

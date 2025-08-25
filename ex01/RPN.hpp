@@ -7,18 +7,18 @@
 
 class RPN
 {
-    public:
-        RPN(void);
-        ~RPN(void);
-        void    calculate(const std::string & rpn);
-        void    doOp(std::string const & element);
-        long long const &getRes(void) const;
+	public:
+		RPN(void);
+		~RPN(void);
+		void    calculate(const std::string & rpn);
+		void    doOp(std::string const & element);
+		long long const &getRes(void) const;
 
-        
-    private:
-        RPN(const RPN& src);
-        RPN& operator=(const RPN& rhs);
-        std::stack<long long>   _stack;
+		
+	private:
+		RPN(const RPN& src);
+		RPN& operator=(const RPN& rhs);
+		std::stack<long long>   _stack;
 
 };
 
